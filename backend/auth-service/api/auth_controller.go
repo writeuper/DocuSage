@@ -37,7 +37,7 @@ func (c *AuthController) RegisterRoutes(router *gin.RouterGroup) {
 
 	// 需要认证的路由
 	auth := router.Group("/")
-	auth.Use(middleware.AuthMiddleware(c.authService.(*services.AuthService).GetConfig(), c.logger))
+	auth.Use(middleware.AuthMiddleware(c.authService.GetConfig(), c.logger))
 	{
 		auth.GET("/me", c.GetProfile)
 		auth.POST("/change-password", c.ChangePassword)
@@ -45,7 +45,7 @@ func (c *AuthController) RegisterRoutes(router *gin.RouterGroup) {
 
 	// 管理员路由
 	admin := router.Group("/admin/")
-	admin.Use(middleware.AuthMiddleware(c.authService.(*services.AuthService).GetConfig(), c.logger))
+	admin.Use(middleware.AuthMiddleware(c.authService.GetConfig(), c.logger))
 	admin.Use(middleware.AdminMiddleware(c.logger))
 	{
 		admin.GET("/users", c.ListUsers)
@@ -189,14 +189,14 @@ func (c *AuthController) ListUsers(ctx *gin.Context) {
 	var userList []gin.H
 	for _, user := range users {
 		userList = append(userList, gin.H{
-			"id":           user.ID,
-			"username":     user.Username,
-			"email":        user.Email,
-			"full_name":    user.FullName,
-			"role":         user.Role,
-			"status":       user.Status,
+			"id":            user.ID,
+			"username":      user.Username,
+			"email":         user.Email,
+			"full_name":     user.FullName,
+			"role":          user.Role,
+			"status":        user.Status,
 			"last_login_at": user.LastLoginAt,
-			"created_at":   user.CreatedAt,
+			"created_at":    user.CreatedAt,
 		})
 	}
 

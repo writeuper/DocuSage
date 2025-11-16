@@ -5,6 +5,7 @@ import (
 	"docusage/auth-service/utils"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -92,7 +93,7 @@ func CORSMiddleware() gin.HandlerFunc {
 func LoggerMiddleware(logger *zap.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 开始时间
-		startTime := zap.Time("start_time", c.Time())
+		startTime := zap.Time("start_time", time.Now())
 
 		// 处理请求
 		c.Next()
