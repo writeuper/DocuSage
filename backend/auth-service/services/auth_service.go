@@ -60,14 +60,14 @@ func (s *AuthService) Login(req *models.LoginRequest) (*models.TokenPair, error)
 	if !utils.CheckPassword(req.Password, user.PasswordHash, s.logger) {
 		// 增加失败尝试次数
 		user.FailedAttempts++
-		
+
 		// 检查是否需要锁定账户
 		if user.FailedAttempts >= s.config.MaxLoginAttempts {
 			user.Status = "locked"
 			user.LockedUntil = time.Now().Add(time.Duration(s.config.LockoutDurationMinutes) * time.Minute)
 			s.logger.Warn("Account locked due to too many failed attempts", zap.String("username", user.Username))
 		}
-		
+
 		s.db.Save(&user)
 		s.logger.Warn("Login attempt failed: Invalid password", zap.String("username", user.Username))
 		return nil, errors.New("invalid credentials")
