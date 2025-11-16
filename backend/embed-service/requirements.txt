@@ -1,0 +1,6 @@
+sentence-transformers==2.2.2
+pymilvus==2.3.5
+grpcio==1.59.0
+grpcio-tools==1.59.0
+pymysql==1.1.0
+python-dotenv==1.0.0
