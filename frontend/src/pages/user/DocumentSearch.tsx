@@ -20,7 +20,10 @@ const DocumentSearch: React.FC = () => {
 
   const { data, isLoading, refetch } = useQuery<SearchResult>(
     ['search', searchText, filters],
-    () => searchDocuments({ query: searchText, ...filters }),
+    async () => {
+      const response = await searchDocuments({ query: searchText, ...filters })
+      return response.data
+    },
     { enabled: false }
   )
 
