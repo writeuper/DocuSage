@@ -22,19 +22,16 @@ func AuthMiddleware(cfg *config.Config, logger *zap.Logger) gin.HandlerFunc {
 			return
 		}
 
-		// 检查Bearer前缀
-		parts := strings.Split(authHeader, " ")
-		if len(parts) != 2 || parts[0] != "Bearer" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid authorization header format"})
-			c.Abort()
-			return
+		// 移除Bearer前缀（如果存在）
+		tokenString := authHeader
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			tokenString = strings.TrimPrefix(authHeader, "Bearer ")
 		}
-
-		tokenString := parts[1]
 
 		// 验证令牌
 		claims, err := utils.ValidateToken(tokenString, cfg, logger)
 		if err != nil {
+			logger.Error("Token validation failed", zap.Error(err))
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
 			c.Abort()
 			return

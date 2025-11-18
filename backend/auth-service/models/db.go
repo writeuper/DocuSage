@@ -38,12 +38,12 @@ func InitDB(cfg *config.Config, log *zap.Logger) error {
 		return err
 	}
 
-	//// 初始化默认数据
-	//err = initDefaultData(log)
-	//if err != nil {
-	//	log.Error("Failed to initialize default data", zap.Error(err))
-	//	return err
-	//}
+	// 初始化默认数据
+	err = initDefaultData(log)
+	if err != nil {
+		log.Error("Failed to initialize default data", zap.Error(err))
+		return err
+	}
 
 	log.Info("Database initialized successfully")
 	return nil

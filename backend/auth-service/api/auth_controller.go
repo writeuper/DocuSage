@@ -125,11 +125,29 @@ func (c *AuthController) RefreshToken(ctx *gin.Context) {
 
 // GetProfile 获取用户个人信息
 func (c *AuthController) GetProfile(ctx *gin.Context) {
-	userID, _ := ctx.Get("userID")
+	userID, exists := ctx.Get("userID")
+	if !exists {
+		c.logger.Error("User ID not found in context")
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
 
-	user, err := c.authService.GetUserByID(userID.(uint))
+	// 转换userID到uint类型
+	uid, ok := userID.(uint)
+	if !ok {
+		c.logger.Error("Failed to convert userID to uint")
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
+	}
+
+	user, err := c.authService.GetUserByID(uid)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.logger.Error("Failed to get user by ID", zap.Error(err), zap.Uint("userID", uid))
+		if err.Error() == "user not found" {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user information"})
+		}
 		return
 	}
 
@@ -143,6 +161,7 @@ func (c *AuthController) GetProfile(ctx *gin.Context) {
 		"status":    user.Status,
 	}
 
+	c.logger.Info("User profile retrieved successfully", zap.Uint("userID", uid))
 	ctx.JSON(http.StatusOK, response)
 }
 
