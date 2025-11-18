@@ -38,7 +38,7 @@ func LoadConfig() *Config {
 		DocServiceAddr:     getEnv("DOC_SERVICE_ADDR", "localhost:8003"),
 		KnowledgeBaseAddr:  getEnv("KNOWLEDGE_BASE_ADDR", "localhost:8004"),
 		ToolServiceAddr:    getEnv("TOOL_SERVICE_ADDR", "localhost:8005"),
-		JWTSecretKey:       getEnv("JWT_SECRET_KEY", "default-secret-key"),
+		JWTSecretKey:       getEnv("JWT_SECRET_KEY", "your-secret-key-change-in-production"),
 		JWTExpirationMin:   getEnvAsInt("JWT_EXPIRATION_MIN", 60),
 		RateLimitPerIP:     getEnvAsInt("RATE_LIMIT_PER_IP", 100),
 		RateLimitPerUser:   getEnvAsInt("RATE_LIMIT_PER_USER", 300),
