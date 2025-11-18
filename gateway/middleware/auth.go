@@ -49,7 +49,7 @@ func JWTAuthMiddleware(secretKey string) gin.HandlerFunc {
 }
 
 // GenerateToken 生成JWT token
-func GenerateToken(userID, username, role, secretKey string, expireHours int) (string, error) {
+func GenerateToken(userID uint, username, role, secretKey string, expireHours int) (string, error) {
 	// 设置过期时间
 	expireTime := time.Now().Add(time.Hour * time.Duration(expireHours))
 
@@ -79,7 +79,7 @@ func GenerateToken(userID, username, role, secretKey string, expireHours int) (s
 
 // Claims 定义JWT声明
 type Claims struct {
-	UserID   string `json:"user_id"`
+	UserID   uint   `json:"user_id"`
 	Username string `json:"username"`
 	Role     string `json:"role"`
 	jwt.RegisteredClaims
