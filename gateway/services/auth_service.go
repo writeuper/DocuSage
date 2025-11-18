@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,14 @@ type AuthService struct {
 
 // NewAuthService 创建认证服务代理实例
 func NewAuthService(baseURL string, logger *zap.Logger) *AuthService {
+	// 确保baseURL包含http://或https://前缀
+	if len(baseURL) > 0 && !strings.HasPrefix(baseURL, "http://") && !strings.HasPrefix(baseURL, "https://") {
+		baseURL = "http://" + baseURL
+	}
+
+	// 移除末尾的斜杠
+	baseURL = strings.TrimSuffix(baseURL, "/")
+
 	return &AuthService{
 		baseURL: baseURL,
 		logger:  logger,

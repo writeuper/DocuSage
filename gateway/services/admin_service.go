@@ -19,6 +19,11 @@ type AdminService struct {
 }
 
 func NewAdminService(baseURL string, logger *zap.Logger) *AdminService {
+	// 确保baseURL包含http://前缀
+	if len(baseURL) > 0 && baseURL[:7] != "http://" && baseURL[:8] != "https://" {
+		baseURL = "http://" + baseURL
+	}
+
 	return &AdminService{
 		baseURL: strings.TrimSuffix(baseURL, "/"),
 		client: &http.Client{

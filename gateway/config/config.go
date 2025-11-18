@@ -32,8 +32,8 @@ func LoadConfig() *Config {
 
 	return &Config{
 		Env:                getEnv("ENV", "development"),
-		ServerPort:         getEnv("SERVER_PORT", "8000"),
-		AuthServiceAddr:    getEnv("AUTH_SERVICE_ADDR", "localhost:8001"),
+		ServerPort:         getEnv("SERVER_PORT", "8080"),
+		AuthServiceAddr:    getEnv("AUTH_SERVICE_ADDR", "localhost:8081"),
 		QueryServiceAddr:   getEnv("QUERY_SERVICE_ADDR", "localhost:8002"),
 		DocServiceAddr:     getEnv("DOC_SERVICE_ADDR", "localhost:8003"),
 		KnowledgeBaseAddr:  getEnv("KNOWLEDGE_BASE_ADDR", "localhost:8004"),

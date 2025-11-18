@@ -33,6 +33,7 @@ func (c *AuthController) RegisterRoutes(router *gin.RouterGroup) {
 		public.POST("/login", c.Login)
 		public.POST("/register", c.Register)
 		public.POST("/refresh", c.RefreshToken)
+		public.POST("/logout", c.Logout)
 	}
 
 	// 需要认证的路由
@@ -165,6 +166,13 @@ func (c *AuthController) ChangePassword(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Password changed successfully"})
 }
 
+// Logout 用户登出
+func (c *AuthController) Logout(ctx *gin.Context) {
+	// 在实际应用中，这里可以将令牌加入黑名单
+	// 目前简单返回成功消息
+	ctx.JSON(http.StatusOK, gin.H{"message": "Logged out successfully"})
+}
+
 // ListUsers 获取用户列表（管理员）
 func (c *AuthController) ListUsers(ctx *gin.Context) {
 	// 解析分页参数
@@ -188,16 +196,19 @@ func (c *AuthController) ListUsers(ctx *gin.Context) {
 	// 构建响应数据
 	var userList []gin.H
 	for _, user := range users {
-		userList = append(userList, gin.H{
-			"id":            user.ID,
-			"username":      user.Username,
-			"email":         user.Email,
-			"full_name":     user.FullName,
-			"role":          user.Role,
-			"status":        user.Status,
-			"last_login_at": user.LastLoginAt,
-			"created_at":    user.CreatedAt,
-		})
+		userInfo := gin.H{
+			"id":         user.ID,
+			"username":   user.Username,
+			"email":      user.Email,
+			"full_name":  user.FullName,
+			"role":       user.Role,
+			"status":     user.Status,
+			"created_at": user.CreatedAt,
+		}
+		if user.LastLoginAt != nil {
+			userInfo["last_login_at"] = user.LastLoginAt
+		}
+		userList = append(userList, userInfo)
 	}
 
 	response := gin.H{
@@ -227,15 +238,17 @@ func (c *AuthController) GetUser(ctx *gin.Context) {
 	}
 
 	response := gin.H{
-		"id":            user.ID,
-		"username":      user.Username,
-		"email":         user.Email,
-		"full_name":     user.FullName,
-		"role":          user.Role,
-		"status":        user.Status,
-		"last_login_at": user.LastLoginAt,
-		"created_at":    user.CreatedAt,
-		"updated_at":    user.UpdatedAt,
+		"id":         user.ID,
+		"username":   user.Username,
+		"email":      user.Email,
+		"full_name":  user.FullName,
+		"role":       user.Role,
+		"status":     user.Status,
+		"created_at": user.CreatedAt,
+		"updated_at": user.UpdatedAt,
+	}
+	if user.LastLoginAt != nil {
+		response["last_login_at"] = user.LastLoginAt
 	}
 
 	ctx.JSON(http.StatusOK, response)

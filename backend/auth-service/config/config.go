@@ -66,7 +66,7 @@ func LoadConfig() (*Config, error) {
 		refreshTokenExpireDays = 7
 	}
 
-	minPasswordLength, err := strconv.Atoi(getEnv("MIN_PASSWORD_LENGTH", "8"))
+	minPasswordLength, err := strconv.Atoi(getEnv("MIN_PASSWORD_LENGTH", "6"))
 	if err != nil {
 		minPasswordLength = 8
 	}
@@ -88,7 +88,7 @@ func LoadConfig() (*Config, error) {
 		DBHost:     getEnv("DB_HOST", "localhost"),
 		DBPort:     getEnv("DB_PORT", "3306"),
 		DBUser:     getEnv("DB_USER", "root"),
-		DBPassword: getEnv("DB_PASSWORD", "password"),
+		DBPassword: getEnv("DB_PASSWORD", "123456"),
 		DBName:     getEnv("DB_NAME", "auth_service"),
 
 		RedisAddr:     getEnv("REDIS_ADDR", "localhost:6379"),

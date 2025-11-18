@@ -16,7 +16,8 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        // 不重写路径，因为后端路由就是 /api/auth
+        // rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   },

@@ -19,6 +19,11 @@ type DocService struct {
 }
 
 func NewDocService(baseURL string, logger *zap.Logger) *DocService {
+	// 确保baseURL包含http://前缀
+	if len(baseURL) > 0 && baseURL[:7] != "http://" && baseURL[:8] != "https://" {
+		baseURL = "http://" + baseURL
+	}
+
 	return &DocService{
 		baseURL: strings.TrimSuffix(baseURL, "/"),
 		client: &http.Client{

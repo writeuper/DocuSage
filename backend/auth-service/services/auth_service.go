@@ -45,7 +45,7 @@ func (s *AuthService) Login(req *models.LoginRequest) (*models.TokenPair, error)
 	}
 
 	// 检查用户锁定状态
-	if user.Status == "locked" || !user.LockedUntil.IsZero() && user.LockedUntil.After(time.Now()) {
+	if user.Status == "locked" || (user.LockedUntil != nil && user.LockedUntil.After(time.Now())) {
 		s.logger.Warn("Login attempt failed: Account locked", zap.String("username", user.Username))
 		return nil, errors.New("account is locked")
 	}
@@ -64,7 +64,8 @@ func (s *AuthService) Login(req *models.LoginRequest) (*models.TokenPair, error)
 		// 检查是否需要锁定账户
 		if user.FailedAttempts >= s.config.MaxLoginAttempts {
 			user.Status = "locked"
-			user.LockedUntil = time.Now().Add(time.Duration(s.config.LockoutDurationMinutes) * time.Minute)
+			lockUntil := time.Now().Add(time.Duration(s.config.LockoutDurationMinutes) * time.Minute)
+			user.LockedUntil = &lockUntil
 			s.logger.Warn("Account locked due to too many failed attempts", zap.String("username", user.Username))
 		}
 
@@ -75,7 +76,8 @@ func (s *AuthService) Login(req *models.LoginRequest) (*models.TokenPair, error)
 
 	// 重置失败尝试次数
 	user.FailedAttempts = 0
-	user.LastLoginAt = time.Now()
+	now := time.Now()
+	user.LastLoginAt = &now
 	s.db.Save(&user)
 
 	// 生成令牌对

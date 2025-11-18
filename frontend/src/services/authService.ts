@@ -53,7 +53,7 @@ export const logout = () => {
 
 // 获取用户信息接口
 export const getUserInfo = () => {
-  return api.get('/userinfo')
+  return api.get('/me')
 }
 
 // 刷新token接口
