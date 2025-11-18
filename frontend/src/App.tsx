@@ -38,6 +38,7 @@ const AdminLayout: React.FC = () => {
         { key: 'config', label: '系统配置', icon: <SettingOutlined /> },
         { key: 'monitor', label: '监控面板', icon: <UserOutlined /> },
         { key: 'operation', label: '运维工具', icon: <SettingOutlined /> },
+        { key: 'center', label: '个人中心', icon: <UserOutlined /> },
       ]}
     >
       <Outlet />
@@ -74,6 +75,7 @@ const App: React.FC = () => {
           <Route path="config" element={<SystemConfig />} />
           <Route path="monitor" element={<MonitorPanel />} />
           <Route path="operation" element={<OperationTools />} />
+          <Route path="center" element={<UserCenter />} />
         </Route>
       </Routes>
     </Router>
