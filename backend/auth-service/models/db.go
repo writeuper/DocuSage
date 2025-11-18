@@ -2,6 +2,7 @@ package models
 
 import (
 	"docusage/auth-service/config"
+	"golang.org/x/crypto/bcrypt"
 
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
@@ -86,15 +87,22 @@ func initDefaultData(log *zap.Logger) error {
 	}
 
 	// 检查是否存在默认管理员用户
-	var adminCount int64
-	DB.Model(&User{}).Where("role = ?", "admin").Count(&adminCount)
+	var adminUser User
+	result := DB.Where("username = ?", "admin").First(&adminUser)
 
-	if adminCount == 0 {
+	if result.Error == gorm.ErrRecordNotFound {
+		// 生成正确的密码哈希 (admin123)
+		adminPasswordHash, err := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+		if err != nil {
+			log.Error("Failed to generate admin password hash", zap.Error(err))
+			return err
+		}
+
 		// 创建默认管理员用户
-		adminUser := User{
+		adminUser = User{
 			Username:     "admin",
 			Email:        "admin@example.com",
-			PasswordHash: "$2a$10$VZ1vU0KjYq0QZQZqZQZQZeQZQZQZQZQZQZQZQZQZQZQZQZQZQZQ", // admin123
+			PasswordHash: string(adminPasswordHash),
 			FullName:     "System Administrator",
 			Role:         "admin",
 			Status:       "active",
@@ -104,7 +112,24 @@ func initDefaultData(log *zap.Logger) error {
 			log.Error("Failed to create default admin user", zap.Error(err))
 			return err
 		}
-		log.Info("Created default admin user")
+		log.Info("Created default admin user with username: admin")
+	} else if result.Error == nil {
+		// 管理员用户已存在，重置密码为admin123
+		adminPasswordHash, err := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+		if err != nil {
+			log.Error("Failed to generate admin password hash", zap.Error(err))
+			return err
+		}
+
+		adminUser.PasswordHash = string(adminPasswordHash)
+		adminUser.Status = "active"
+		adminUser.FailedAttempts = 0
+
+		if err := DB.Save(&adminUser).Error; err != nil {
+			log.Error("Failed to reset admin password", zap.Error(err))
+			return err
+		}
+		log.Info("Reset existing admin user password to: admin123")
 	}
 
 	return nil
