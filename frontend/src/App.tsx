@@ -1,6 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { Layout } from 'antd'
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom'
 import { UserOutlined, SettingOutlined, FileTextOutlined } from '@ant-design/icons'
 import MainLayout from './components/templates/MainLayout'
 import Login from './pages/common/Login'
@@ -14,7 +13,37 @@ import MonitorPanel from './pages/admin/MonitorPanel'
 import OperationTools from './pages/admin/OperationTools'
 import PrivateRoute from './utils/PrivateRoute'
 
-const { Content } = Layout
+// 用户端布局组件
+const UserLayout: React.FC = () => {
+  return (
+    <MainLayout 
+      menuItems={[
+        { key: 'home', label: '首页', icon: <FileTextOutlined /> },
+        { key: 'search', label: '文档检索', icon: <UserOutlined /> },
+        { key: 'tools', label: '场景工具', icon: <SettingOutlined /> },
+        { key: 'center', label: '个人中心', icon: <UserOutlined /> },
+      ]}
+    >
+      <Outlet />
+    </MainLayout>
+  )
+}
+
+// 管理员端布局组件
+const AdminLayout: React.FC = () => {
+  return (
+    <MainLayout 
+      menuItems={[
+        { key: 'knowledge', label: '知识库管理', icon: <FileTextOutlined /> },
+        { key: 'config', label: '系统配置', icon: <SettingOutlined /> },
+        { key: 'monitor', label: '监控面板', icon: <UserOutlined /> },
+        { key: 'operation', label: '运维工具', icon: <SettingOutlined /> },
+      ]}
+    >
+      <Outlet />
+    </MainLayout>
+  )
+}
 
 const App: React.FC = () => {
   return (
@@ -26,44 +55,26 @@ const App: React.FC = () => {
         {/* 用户端路由 */}
         <Route path="/" element={
           <PrivateRoute>
-            <MainLayout 
-              menuItems={[
-                { key: 'home', label: '首页', icon: <FileTextOutlined /> },
-                { key: 'search', label: '文档检索', icon: <UserOutlined /> },
-                { key: 'tools', label: '场景工具', icon: <SettingOutlined /> },
-                { key: 'center', label: '个人中心', icon: <UserOutlined /> },
-              ]}
-            >
-              <Content>
-                <Route index element={<Home />} />
-                <Route path="search" element={<DocumentSearch />} />
-                <Route path="tools" element={<SceneTools />} />
-                <Route path="center" element={<UserCenter />} />
-              </Content>
-            </MainLayout>
+            <UserLayout />
           </PrivateRoute>
-        } />
+        }>
+          <Route index element={<Home />} />
+          <Route path="search" element={<DocumentSearch />} />
+          <Route path="tools" element={<SceneTools />} />
+          <Route path="center" element={<UserCenter />} />
+        </Route>
         
         {/* 管理员端路由 */}
         <Route path="/admin" element={
           <PrivateRoute role="admin">
-            <MainLayout 
-              menuItems={[
-                { key: 'knowledge', label: '知识库管理', icon: <FileTextOutlined /> },
-                { key: 'config', label: '系统配置', icon: <SettingOutlined /> },
-                { key: 'monitor', label: '监控面板', icon: <UserOutlined /> },
-                { key: 'operation', label: '运维工具', icon: <SettingOutlined /> },
-              ]}
-            >
-              <Content>
-                <Route index element={<KnowledgeBaseManagement />} />
-                <Route path="config" element={<SystemConfig />} />
-                <Route path="monitor" element={<MonitorPanel />} />
-                <Route path="operation" element={<OperationTools />} />
-              </Content>
-            </MainLayout>
+            <AdminLayout />
           </PrivateRoute>
-        } />
+        }>
+          <Route index element={<KnowledgeBaseManagement />} />
+          <Route path="config" element={<SystemConfig />} />
+          <Route path="monitor" element={<MonitorPanel />} />
+          <Route path="operation" element={<OperationTools />} />
+        </Route>
       </Routes>
     </Router>
   )

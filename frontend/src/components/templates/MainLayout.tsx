@@ -34,7 +34,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, menuItems }) => {
           DocuSage 智能文档助手
         </div>
         <div className="user-info">
-          {user && `${user.username} (${user.role})`}
+          {user ? `${user.username || '未知用户'} (${user.role || '未知角色'})` : ''}
         </div>
       </Header>
       <Layout>
@@ -43,15 +43,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, menuItems }) => {
             mode="inline"
             selectedKeys={[getSelectedKey()]}
             style={{ height: '100%', borderRight: 0 }}
-          >
-            {menuItems.map(item => (
-              <Menu.Item key={item.key} icon={item.icon}>
+            items={menuItems.map(item => ({
+              key: item.key,
+              icon: item.icon,
+              label: (
                 <Link to={item.key === 'home' ? '/' : `${location.pathname.includes('admin') ? '/admin/' : '/'}${item.key}`}>
                   {item.label}
                 </Link>
-              </Menu.Item>
-            ))}
-          </Menu>
+              )
+            }))}
+          />
         </Sider>
         <Layout className="site-layout">
           <Content

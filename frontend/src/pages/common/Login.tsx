@@ -1,10 +1,16 @@
+/*
+ * @Author: lixinda
+ * @Description: 
+ * @File: 
+ * @Date: 2025-11-13 20:02:41
+ */
 import React, { useState } from 'react'
 import { Form, Input, Button, Card, Typography, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { login } from '@/store/slices/userSlice'
-import { login as loginApi } from '@/services/authService'
+import { login as loginApi, getUserInfo } from '@/services/authService'
 
 const { Title, Paragraph } = Typography
 const { Item } = Form
@@ -17,11 +23,27 @@ const Login: React.FC = () => {
   const handleSubmit = async (values: { username: string; password: string }) => {
     setLoading(true)
     try {
-      const response = await loginApi(values)
-      dispatch(login(response.data))
+      // 先进行登录获取token
+      const loginResponse = await loginApi(values)
+      
+      // 保存token到localStorage
+      localStorage.setItem('token', loginResponse.data.access_token)
+      
+      // 使用token调用getUserInfo获取完整用户信息
+      const userInfoResponse = await getUserInfo()
+      
+      // 构建完整的用户信息对象，包含token
+      const userData = {
+        ...userInfoResponse.data,
+        token: loginResponse.data.access_token
+      }
+      
+      // 更新Redux状态
+      dispatch(login(userData))
       message.success('登录成功')
+      
       // 根据用户角色跳转
-      if (response.data.role === 'admin') {
+      if (userInfoResponse.data.role === 'admin') {
         navigate('/admin')
       } else {
         navigate('/')

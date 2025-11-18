@@ -1,3 +1,9 @@
+/*
+ * @Author: lixinda
+ * @Description: 
+ * @File: 
+ * @Date: 2025-11-18 10:19:38
+ */
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'

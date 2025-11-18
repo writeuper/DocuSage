@@ -1,11 +1,18 @@
+/*
+ * @Author: lixinda
+ * @Description: 
+ * @File: 
+ * @Date: 2025-11-13 20:04:33
+ */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface UserInfo {
-  id: string
+  id: number | string
   username: string
   role: string
-  department: string
-  permissions: string[]
+  email?: string
+  full_name?: string
+  status?: string
 }
 
 interface UserState {
