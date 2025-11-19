@@ -2,11 +2,13 @@ package models
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // Query 搜索查询记录
 type Query struct {
-	ID          uint      `gorm:"primaryKey" json:"id"`
+	gorm.Model
 	UserID      uint      `gorm:"not null" json:"user_id"`
 	QueryText   string    `gorm:"type:text;not null" json:"query_text"`
 	SearchType  string    `gorm:"type:varchar(50);not null;default:'keyword'" json:"search_type"` // keyword, semantic, hybrid
@@ -16,22 +18,18 @@ type Query struct {
 	Status      string    `gorm:"type:varchar(20);not null;default:'pending'" json:"status"` // pending, processing, completed, failed
 	Error       string    `gorm:"type:text" json:"error"`
 	ResultCount int       `gorm:"default:0" json:"result_count"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 // SearchResult 搜索结果
 type SearchResult struct {
-	ID         uint      `gorm:"primaryKey" json:"id"`
-	QueryID    uint      `gorm:"not null;index" json:"query_id"`
-	DocumentID string    `gorm:"type:varchar(255);not null;index" json:"document_id"`
-	Score      float64   `gorm:"not null" json:"score"`
-	Title      string    `gorm:"type:text" json:"title"`
-	Content    string    `gorm:"type:text" json:"content"`
-	PageNumber int       `json:"page_number"`
-	Source     string    `gorm:"type:varchar(100)" json:"source"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	gorm.Model
+	QueryID    uint    `gorm:"not null;index" json:"query_id"`
+	DocumentID string  `gorm:"type:varchar(255);not null;index" json:"document_id"`
+	Score      float64 `gorm:"not null" json:"score"`
+	Title      string  `gorm:"type:text" json:"title"`
+	Content    string  `gorm:"type:text" json:"content"`
+	PageNumber int     `json:"page_number"`
+	Source     string  `gorm:"type:varchar(100)" json:"source"`
 
 	// 关联
 	Query Query `gorm:"foreignKey:QueryID" json:"query,omitempty"`
@@ -39,36 +37,31 @@ type SearchResult struct {
 
 // SearchHistory 用户搜索历史
 type SearchHistory struct {
-	ID        uint      `gorm:"primaryKey" json:"id"`
-	UserID    uint      `gorm:"not null;uniqueIndex:idx_user_query" json:"user_id"`
-	QueryText string    `gorm:"type:text;not null;uniqueIndex:idx_user_query" json:"query_text"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	gorm.Model
+	UserID    uint   `gorm:"not null;uniqueIndex:idx_user_query" json:"user_id"`
+	QueryText string `gorm:"type:varchar(512);not null;uniqueIndex:idx_user_query" json:"query_text"`
 }
 
 // QueryLog 查询日志
 type QueryLog struct {
-	ID           uint      `gorm:"primaryKey" json:"id"`
-	UserID       uint      `gorm:"index" json:"user_id"`
-	QueryText    string    `gorm:"type:text" json:"query_text"`
-	IP           string    `gorm:"type:varchar(50)" json:"ip"`
-	UserAgent    string    `gorm:"type:text" json:"user_agent"`
-	ResponseTime int64     `json:"response_time"` // 毫秒
-	Status       string    `gorm:"type:varchar(20)" json:"status"`
-	CreatedAt    time.Time `json:"created_at"`
+	gorm.Model
+	UserID       uint   `gorm:"index" json:"user_id"`
+	QueryText    string `gorm:"type:text" json:"query_text"`
+	IP           string `gorm:"type:varchar(50)" json:"ip"`
+	UserAgent    string `gorm:"type:text" json:"user_agent"`
+	ResponseTime int64  `json:"response_time"` // 毫秒
+	Status       string `gorm:"type:varchar(20)" json:"status"`
 }
 
 // QueryStats 查询统计
 type QueryStats struct {
-	ID             uint      `gorm:"primaryKey" json:"id"`
+	gorm.Model
 	UserID         uint      `gorm:"index" json:"user_id"`
 	DailyQueries   int       `gorm:"default:0" json:"daily_queries"`
 	WeeklyQueries  int       `gorm:"default:0" json:"weekly_queries"`
 	MonthlyQueries int       `gorm:"default:0" json:"monthly_queries"`
 	TotalQueries   int64     `gorm:"default:0" json:"total_queries"`
 	LastQueryAt    time.Time `json:"last_query_at"`
-	CreatedAt      time.Time `json:"created_at"`
-	UpdatedAt      time.Time `json:"updated_at"`
 }
 
 // SearchRequest 搜索请求模型

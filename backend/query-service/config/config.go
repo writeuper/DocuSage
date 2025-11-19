@@ -231,9 +231,9 @@ func LoadConfig() (*Config, error) {
 
 		DBHost:            getEnv("DB_HOST", "localhost"),
 		DBPort:            getEnv("DB_PORT", "3306"),
-		DBUser:            getEnv("DB_USER", "admin"), // 与其他服务保持一致
-		DBPassword:        getEnv("DB_PASSWORD", "password"),
-		DBName:            getEnv("DB_NAME", "docu_sage"), // 使用统一的数据库名
+		DBUser:            getEnv("DB_USER", "root"), // 与其他服务保持一致
+		DBPassword:        getEnv("DB_PASSWORD", "123456"),
+		DBName:            getEnv("DB_NAME", "query_service"), // 使用统一的数据库名
 		DBMaxIdleConns:    dbMaxIdleConns,
 		DBMaxOpenConns:    dbMaxOpenConns,
 		DBConnMaxLifetime: dbConnMaxLifetime,
