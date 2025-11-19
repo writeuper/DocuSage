@@ -81,7 +81,7 @@ func main() {
 	log.Info("Setting up middlewares...")
 	router.Use(gin.Recovery())
 	router.Use(middleware.LoggerMiddleware(log))
-	router.Use(middleware.CORSMiddleware(cfg))
+	//router.Use(middleware.CORSMiddleware(cfg))
 
 	// 条件性地添加速率限制中间件
 	if cfg.EnableRateLimit {
@@ -103,19 +103,19 @@ func main() {
 
 	// 注册路由
 	log.Info("Registering routes...")
-	apiGroup := router.Group("/api/v1")
+	apiGroup := router.Group("/api/query")
 	queryController.RegisterRoutes(apiGroup)
 
 	// 注册认证中间件到受保护的路由
-	authMiddleware := middleware.AuthMiddleware(cfg, log)
-	adminMiddleware := middleware.AdminMiddleware(log)
+	//authMiddleware := middleware.AuthMiddleware(cfg, log)
+	//adminMiddleware := middleware.AdminMiddleware(log)
 
 	// 应用中间件到相应的路由组
-	protectedRoutes := apiGroup.Group("/")
-	protectedRoutes.Use(authMiddleware)
+	//protectedRoutes := apiGroup.Group("/")
+	//protectedRoutes.Use(authMiddleware)
 
-	adminRoutes := apiGroup.Group("/admin")
-	adminRoutes.Use(authMiddleware, adminMiddleware)
+	//adminRoutes := apiGroup.Group("/admin")
+	//adminRoutes.Use(authMiddleware, adminMiddleware)
 
 	// 健康检查路由
 	router.GET("/health", func(c *gin.Context) {

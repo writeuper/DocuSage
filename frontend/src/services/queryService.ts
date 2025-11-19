@@ -37,7 +37,8 @@ export const searchDocuments = (params: {
     ]
   }
   
-  return api.get<SearchResult>('/search', { params: formattedParams })
+  // 统一使用POST方法，与后端保持一致
+  return api.post<SearchResult>('/search', formattedParams)
 }
 
 // 获取查询历史接口

@@ -3,6 +3,7 @@ package services
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -73,6 +74,12 @@ func (s *QueryService) AdvancedSearch(c *gin.Context) {
 	s.forwardAuthenticatedRequest(c, "POST", "/api/query/advanced")
 }
 
+// 处理搜索请求
+func (s *QueryService) Search(c *gin.Context) {
+	// 现在前后端都使用POST方法，直接转发
+	s.forwardAuthenticatedRequest(c, "POST", "/api/query/search")
+}
+
 // 搜索结果高亮处理
 func (s *QueryService) HighlightResults(c *gin.Context) {
 	s.forwardRequest(c, "POST", "/api/query/highlight")
@@ -136,7 +143,8 @@ func (s *QueryService) forwardRequestInternal(c *gin.Context, method, path strin
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			return
 		}
-		req.Header.Set("X-User-ID", userID.(string))
+		// 修复类型转换错误：将uint转换为string
+		req.Header.Set("X-User-ID", fmt.Sprintf("%d", userID))
 
 		// 添加用户角色信息
 		if role, exists := c.Get("role"); exists {

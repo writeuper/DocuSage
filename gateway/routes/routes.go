@@ -49,6 +49,7 @@ func SetupRoutes(router *gin.Engine, cfg *config.Config, logger *zap.Logger) {
 		auth.GET("/api/auth/me", authService.GetUserInfo)
 
 		// 查询服务路由
+		auth.POST("/api/query/search", queryService.Search) // 统一使用POST方法，与后端保持一致
 		auth.POST("/api/query/semantic", queryService.SemanticSearch)
 		auth.POST("/api/query/fulltext", queryService.FulltextSearch)
 		auth.POST("/api/query/hybrid", queryService.HybridSearch)
@@ -94,7 +95,7 @@ func SetupRoutes(router *gin.Engine, cfg *config.Config, logger *zap.Logger) {
 	admin.Use(middleware.JWTAuthMiddleware(cfg.JWTSecretKey))
 	admin.Use(middleware.RateLimitMiddleware(cfg.RateLimitPerIP, cfg.RateLimitPerUser, cfg.RateLimitWindowSec))
 	// 暂时移除管理员权限检查，使用标准认证即可
-// admin.Use(middleware.AdminAuthMiddleware())
+	// admin.Use(middleware.AdminAuthMiddleware())
 	{
 		// 知识库导入导出
 		admin.POST("/knowledge-bases/import", kbService.ImportKnowledgeBase)
@@ -107,7 +108,7 @@ func SetupRoutes(router *gin.Engine, cfg *config.Config, logger *zap.Logger) {
 		admin.DELETE("/tools/custom/:toolId", toolService.DeleteCustomTool)
 		admin.GET("/tools/stats", toolService.GetToolStats)
 		admin.DELETE("/tools/executions/:executionId", toolService.CancelToolExecution)
-		
+
 		// 用户管理
 		admin.GET("/users", adminService.ListUsers)
 		admin.GET("/users/:id", adminService.GetUser)
